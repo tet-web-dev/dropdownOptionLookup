@@ -1,0 +1,18 @@
+﻿@page
+@model lookup.Pages.LookupModel
+@{
+    <label>Lookup and Select an option</label>
+    <button class="btn btn-primary">Simulate select ID 100</button>
+}
+
+
+@section Scripts {
+    <script>
+
+        $('.btn').on('click', (e) => {
+            localStorage.setItem('target_dom_uid', '1000')
+            localStorage.setItem('selected_item', '100');
+        });
+
+    </script>
+}

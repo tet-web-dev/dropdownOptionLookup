@@ -1,0 +1,55 @@
+﻿@using Microsoft.JSInterop
+@inject NavigationManager NavManager
+@inject IJSRuntime JSRuntime
+@implements IDisposable;
+
+<h3>App Workspace</h3>
+
+<button class="btn btn-link" onclick="@(() => LookupClick())">[Lookup]</button>
+<SelectWithLookup @ref="ActiveLookup" Options="Options"  />
+
+
+    @code {
+    DotNetObjectReference<AppWorkspace> ObjectReference;
+    [Parameter]
+    public List<SelectOption> Options { get; set; } = new() { new SelectOption() { Id = 100, Text = "Option 100" }, new SelectOption() { Id = 200, Text = "Option 200" } };
+
+    private SelectWithLookup ActiveLookup { get; set; } = new();
+
+
+    public List<SelectWithLookup> selects = new List<SelectWithLookup>();
+
+    SelectWithLookup SelectRef
+    {
+        set { selects.Add(value); }
+
+    }
+
+    [JSInvokable("LookupItemSelect")]
+    public async Task LookupItemSelect(string Id)
+    {
+        await ActiveLookup.LookupSelect(int.Parse(Id));
+        StateHasChanged();
+    }
+
+    private async Task LookupClick()
+    {
+        ObjectReference = DotNetObjectReference.Create(this);
+        await JSRuntime.InvokeVoidAsync("FormScripts.openLookup", new { objRef = ObjectReference });
+    }
+
+
+
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+
+        if (ObjectReference != null)
+        {
+            //Now dispose our object reference so our component can be garbage collected
+            ObjectReference.Dispose();
+        }
+    }
+
+}

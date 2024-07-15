@@ -1,0 +1,42 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+   
+    <component type="typeof(lookup.Components.AppWorkspace)" render-mode="Server"  />
+   
+</div>
+
+@section Scripts{
+    <script>
+        let _dotNetObject;
+        let lookupWindow;
+
+        var FormScripts = FormScripts || {};
+
+        FormScripts.openLookup = function (o) {
+            _dotNetObject = o.objRef
+
+            if (lookupWindow)
+                lookupWindow.close();
+            lookupWindow = window.open('@Url.Page("LookUp")' )
+        }
+
+        window.addEventListener('storage', (event) => {
+            if (event.storageArea != localStorage) return;
+   
+            if (event.key === 'selected_item') {
+                var selected_value = localStorage.getItem('selected_item');
+                _dotNetObject.invokeMethodAsync('LookupItemSelect', selected_value);
+
+                localStorage.setItem('selected_item', '0');
+                lookupWindow.close();
+            }
+
+        });
+    </script>
+}

@@ -1,0 +1,48 @@
+﻿<h3>Select With Lookup</h3>
+
+<select class="form-control mb-3" >
+    <option value="0">[Select]</option>
+    @if (Options is not null)
+    {
+        @foreach (var item in Options.OrderBy(z => z.Text))
+        {
+            <option value="@item.Id" selected="@item.IsSelected">@item.Text</option>
+        }
+    }
+</select>
+
+@code {
+
+    [Parameter]
+    public List<SelectOption> Options { get; set; }
+
+    public async Task LookupSelect(int id)
+    {
+        Options.ForEach(x =>
+        {
+            if (id == x.Id)
+            {
+                x.IsSelected = true;
+            }
+            else
+            {
+                x.IsSelected = false;
+            }
+        });
+
+        StateHasChanged();
+
+
+    }
+
+    [Parameter]
+    public EventCallback<SelectWithLookup> LookupClickEvent { get; set; }
+
+    private async Task LookupClick(SelectWithLookup s)
+    {
+        await LookupClickEvent.InvokeAsync(s);
+    }
+
+}
+
+
